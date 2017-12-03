@@ -62,7 +62,7 @@ def lambda_websocket_to_response(wscontext):
 	meta_remove = set()
 	for k, v in six.iteritems(wscontext.orig_meta):
 		found = False
-		for nk, nv in wscontext.meta:
+		for nk, nv in six.iteritems(wscontext.meta):
 			if nk.lower() == k:
 				found = True
 				break
@@ -74,7 +74,7 @@ def lambda_websocket_to_response(wscontext):
 	for k, v in six.iteritems(wscontext.meta):
 		lname = k.lower()
 		need_set = True
-		for ok, ov in wscontext.orig_meta:
+		for ok, ov in six.iteritems(wscontext.orig_meta):
 			if lname == ok and v == ov:
 				need_set = False
 				break
