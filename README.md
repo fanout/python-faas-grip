@@ -2,9 +2,9 @@
 
 Author: Justin Karneges <justin@fanout.io>
 
-Function-as-a-service backends are not well-suited for handling long-lived connections, such as HTTP streams or WebSockets, because the function invocations are meant to be short-lived. The FaaS GRIP library makes it easy to delegate long-lived connection management to [Fanout Cloud](https://fanout.io/cloud/). This way, the backend function only needs to be invoked when there is connection activity, rather than having to remain running for the duration of each connection.
+Function-as-a-service backends are not well-suited for handling long-lived connections, such as HTTP streams or WebSockets, because the function invocations are meant to be short-lived. The FaaS GRIP library makes it easy to delegate long-lived connection management to [Fanout Cloud](https://fanout.io/cloud/). This way, backend functions only need to be invoked when there is connection activity, rather than having to run for the duration of each connection.
 
-This library is intended for use with AWS Lambda with AWS API Gateway. Support for other FaaS backends may be added in the future.
+This library is intended for use with AWS Lambda and AWS API Gateway. Support for other FaaS backends may be added in the future.
 
 # Setup
 
@@ -20,7 +20,7 @@ Set the `GRIP_URL` environment variable containing your Fanout Cloud settings, o
 https://api.fanout.io/realm/your-realm?iss=your-realm&key=base64:your-realm-key
 ```
 
-Next, set up an API and resource in AWS API Gateway to point to your Lambda function, using a Lambda Proxy Integration, and add `application/websocket-events` as a Binary media type.
+Next, set up an API and resource in AWS API Gateway to point to your Lambda function, using a Lambda Proxy Integration. If you wish to support WebSockets, be sure to add `application/websocket-events` as a Binary media type.
 
 Finally, edit the Fanout Cloud domain origin server (SSL) to point to the host and port of the AWS API Gateway Invoke URL.
 
@@ -30,25 +30,15 @@ Now whenever an HTTP request or WebSocket connection is made to your Fanout Clou
 
 ## WebSockets
 
-Fanout Cloud converts incoming WebSocket connection activity into a series of HTTP requests to your backend. The requests are formatted using WebSocket-over-HTTP protocol, which this library will parse for you. Call `lambda_get_websocket` with the incoming Lambda event and it'll return a pseudo-socket object, `WebSocketContext`. If the event was not a WebSocket-over-HTTP request, then an exception will be raised.
+Fanout Cloud converts incoming WebSocket connection activity into a series of HTTP requests to your backend. The requests are formatted using WebSocket-over-HTTP protocol, which this library will parse for you. Call `lambda_get_websocket` with the incoming Lambda event and it'll return a `WebSocketContext` object:
 
-```
-def handler(event, context):
-    try:
-        ws = lambda_get_websocket(event)
-    except ValueError:
-        return {
-            'statusCode': 400,
-            'headers': {'Content-Type': 'text/plain'},
-            'body': 'Not a WebSocket-over-HTTP request\n'
-        }
-
-    ...
+```py
+ws = lambda_get_websocket(event)
 ```
 
-Once you have a `WebSocketContext` object, you can call methods on it such as `accept()`, `send()`, `recv()`, and `close()`.
+The `WebSocketContext` is a pseudo-socket object. You can call methods on it such as `accept()`, `send()`, `recv()`, and `close()`.
 
-Here's a chat-like service that accepts all connection requests, and any messages received are broadcasted out. Clients can choose a nickname by sending `/nick <name>`.
+For example, here's a chat-like service that accepts all connection requests, and any messages received are broadcasted out. Clients can choose a nickname by sending `/nick <name>`.
 
 ```py
 from gripcontrol import WebSocketMessageFormat
