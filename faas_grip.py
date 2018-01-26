@@ -16,7 +16,6 @@ from gripcontrol import (
 )
 from pubcontrol import Item
 
-
 # The PubControl instance and lock used for synchronization.
 _pubcontrol = None
 _lock = threading.Lock()
