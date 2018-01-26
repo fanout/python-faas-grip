@@ -25,13 +25,7 @@ _lock = threading.Lock()
 
 
 def _is_basestring_instance(instance):
-    try:
-        if isinstance(instance, basestring):
-            return True
-    except NameError:
-        if isinstance(instance, str):
-            return True
-    return False
+    return isinstance(instance, six.string_types)
 
 
 def _get_proxies():
