@@ -16,6 +16,7 @@ is_python3 = sys.version_info >= (3,)
 _pubcontrol = None
 _lock = threading.Lock()
 
+
 def _is_basestring_instance(instance):
     try:
         if isinstance(instance, basestring):
@@ -24,6 +25,7 @@ def _is_basestring_instance(instance):
         if isinstance(instance, str):
             return True
     return False
+
 
 def _get_proxies():
     proxies = []
@@ -35,6 +37,7 @@ def _get_proxies():
         proxies.append(parse_grip_uri(grip_url))
     return proxies
 
+
 def _get_pubcontrol():
     global _pubcontrol
     _lock.acquire()
@@ -44,11 +47,14 @@ def _get_pubcontrol():
     _lock.release()
     return _pubcontrol
 
+
 def _get_prefix():
     return os.environ.get('GRIP_PREFIX', '')
 
+
 def get_pubcontrol():
     return _get_pubcontrol()
+
 
 def publish(channel, formats, id=None, prev_id=None, blocking=True, callback=None, meta={}):
     pub = _get_pubcontrol()
@@ -56,6 +62,7 @@ def publish(channel, formats, id=None, prev_id=None, blocking=True, callback=Non
         Item(formats, id=id, prev_id=prev_id, meta=meta),
         blocking=blocking,
         callback=callback)
+
 
 def lambda_websocket_to_response(wscontext):
     # meta to remove?
@@ -104,6 +111,7 @@ def lambda_websocket_to_response(wscontext):
         'headers': headers,
         'body': b64encode(body)
     }
+
 
 def lambda_get_websocket(event):
     lower_headers = {}
