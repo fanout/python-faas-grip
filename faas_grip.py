@@ -1,14 +1,21 @@
+import json
 import os
 import sys
+import threading
+import types
 from base64 import b64encode, b64decode
 from struct import pack
-import threading
-import json
-import types
+
 import six
+from gripcontrol import (
+    GripPubControl,
+    WebSocketContext,
+    WebSocketEvent,
+    decode_websocket_events,
+    encode_websocket_events,
+    parse_grip_uri
+)
 from pubcontrol import Item
-from gripcontrol import GripPubControl, WebSocketEvent, WebSocketContext, \
-    parse_grip_uri, decode_websocket_events, encode_websocket_events
 
 is_python3 = sys.version_info >= (3,)
 
