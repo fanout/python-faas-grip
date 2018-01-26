@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 import threading
 import types
 from base64 import b64encode, b64decode
@@ -56,7 +55,8 @@ def get_pubcontrol():
     return _get_pubcontrol()
 
 
-def publish(channel, formats, id=None, prev_id=None, blocking=True, callback=None, meta={}):
+def publish(channel, formats, id=None, prev_id=None,
+            blocking=True, callback=None, meta={}):
     pub = _get_pubcontrol()
     pub.publish(
         _get_prefix() + channel,
