@@ -65,10 +65,12 @@ def get_pubcontrol():
 
 def publish(channel, formats, id=None, prev_id=None, blocking=True, callback=None, meta={}):
     pub = _get_pubcontrol()
-    pub.publish(_get_prefix() + channel,
+    pub.publish(
+        _get_prefix() + channel,
         Item(formats, id=id, prev_id=prev_id, meta=meta),
         blocking=blocking,
-        callback=callback)
+        callback=callback
+    )
 
 
 def lambda_websocket_to_response(wscontext):
@@ -100,7 +102,9 @@ def lambda_websocket_to_response(wscontext):
         events.append(WebSocketEvent('OPEN'))
     events.extend(wscontext.out_events)
     if wscontext.closed:
-        events.append(WebSocketEvent('CLOSE', pack('>H', wscontext.out_close_code)))
+        events.append(
+            WebSocketEvent('CLOSE', pack('>H', wscontext.out_close_code))
+        )
 
     headers = {'Content-Type': 'application/websocket-events'}
     if wscontext.accepted:
@@ -131,8 +135,11 @@ def lambda_get_websocket(event):
         if at != -1:
             content_type = content_type[:at].strip()
 
-    if event['httpMethod'] != 'POST' or content_type != 'application/websocket-events':
-        raise ValueError('request does not seem to be a websocket-over-http request')
+    if (event['httpMethod'] != 'POST'
+            or content_type != 'application/websocket-events'):
+        raise ValueError(
+            'request does not seem to be a websocket-over-http request'
+        )
 
     cid = lower_headers.get('connection-id')
 
@@ -158,6 +165,9 @@ def lambda_get_websocket(event):
 
     wscontext = WebSocketContext(cid, meta, events, grip_prefix=_get_prefix())
 
-    wscontext.to_response = types.MethodType(lambda_websocket_to_response, wscontext)
+    wscontext.to_response = types.MethodType(
+        lambda_websocket_to_response,
+        wscontext
+    )
 
     return wscontext
