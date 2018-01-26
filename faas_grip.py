@@ -17,7 +17,6 @@ from gripcontrol import (
 )
 from pubcontrol import Item
 
-is_python3 = sys.version_info >= (3,)
 
 # The PubControl instance and lock used for synchronization.
 _pubcontrol = None
@@ -148,12 +147,8 @@ def lambda_get_websocket(event):
     else:
         body = event['body']
 
-    if is_python3:
-        if isinstance(body, str):
-            body = body.encode('utf-8')
-    else:
-        if isinstance(body, unicode):
-            body = body.encode('utf-8')
+    if isinstance(body, six.text_type):
+        body = body.encode('utf-8')
 
     events = decode_websocket_events(body)
 
