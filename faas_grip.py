@@ -21,10 +21,6 @@ _pubcontrol = None
 _lock = threading.Lock()
 
 
-def _is_basestring_instance(instance):
-    return isinstance(instance, six.string_types)
-
-
 def _get_proxies():
     proxies = []
     grip_proxies = os.environ.get('GRIP_PROXIES')
