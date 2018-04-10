@@ -108,7 +108,7 @@ def lambda_websocket_to_response(wscontext):
         'isBase64Encoded': True,
         'statusCode': 200,
         'headers': headers,
-        'body': b64encode(body)
+        'body': b64encode(body).decode('utf-8')
     }
 
 
